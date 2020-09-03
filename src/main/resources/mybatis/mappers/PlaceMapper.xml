@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.cao.travel.mapper.PlaceMapper">
+    <!--开启缓存，让 place 和 province 共用一个hash缓存，因为两个表中的数据互有关联-->
+    <cache-ref namespace="cn.cao.travel.mapper.ProvinceMapper"/>
+
+
+    <!--根据省份ID分页查询-->
+    <select id="queryByProvinceIdPage" resultType="place">
+        select * from travel.t_place
+        where province_id=#{provinceId}
+        order by peak_season_ticket
+        limit #{startRow},#{rows}
+    </select>
+
+    <!--根据省份ID 查询所有景点，就不和分页一起用了-->
+    <select id="queryByProvinceId" resultType="place">
+        select * from travel.t_place
+        where province_id=#{provinceId}
+    </select>
+
+    <!--根据省份ID 查询景点个数-->
+    <select id="queryByProvinceIdCounts" resultType="int">
+        select count(id) from travel.t_place where province_id=#{provinceId}
+    </select>
+
+    <!--查询一个地点-->
+    <select id="queryPlaceById" resultType="place">
+        select * from travel.t_place where id=#{id}
+    </select>
+
+    <!--根据ID 删除-->
+    <delete id="deleteByPlace">
+        delete from travel.t_place where id=#{id}
+    </delete>
+    <!--根据省份ID 删除-->
+    <delete id="deleteByProvinceId">
+        delete from travel.t_place where province_id=#{provinceId}
+    </delete>
+
+
+    <!--保存一个景点-->
+    <insert id="save" parameterType="place">
+        insert into travel.t_place
+        values (default,#{name},#{picPath},#{peakSeasonTime},#{peakSeasonTicket},#{offSeasonTicket},#{introduction},#{provinceId})
+    </insert>
+
+    <!--更新景点-->
+    <update id="updatePlace">
+        update travel.t_place
+        <set>
+            <if test="picPath!=null and picPath!=''">
+                pic_path=#{picPath},
+            </if>
+            name=#{name},peak_season_time=#{peakSeasonTime},peak_season_ticket=#{peakSeasonTicket},
+            off_season_ticket=#{offSeasonTicket},introduction=#{introduction},province_id=#{provinceId}
+
+        </set>
+        where id=#{id}
+    </update>
+</mapper>
