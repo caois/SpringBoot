@@ -16,8 +16,10 @@ public class JWTUtils {
 
     // 加密 秘钥
     private final static String SECRET = "!A#2y$^R%X*ZC%#";
+
     // 解码后的 JWT token 对象
-    private static DecodedJWT decodedJWT;
+    //静态成员变量对象在多线程情况下是共享的，这不是一个明智的设定，这样会导致每个用户获取的都是同一个 DecodedJWT
+    //private static DecodedJWT decodedJWT;
 
     /**
      * 获取JWT token
@@ -42,17 +44,13 @@ public class JWTUtils {
     }
 
     /**
-     * 校验 token，校验成功后，通过getDecodedJWT获取到解码后的 jwt token
+     *
      * @param token
+     * @return 校验成功后直接返回
      */
-    public static void verifyToken(String token){
-        decodedJWT = JWT.require(Algorithm.HMAC256(SECRET)).build().verify(token);
+    public static DecodedJWT verifyToken(String token){
+        return JWT.require(Algorithm.HMAC256(SECRET)).build().verify(token);
     }
 
-    /**
-     * @return 解码后的 jwt token
-     */
-    public static DecodedJWT getDecodedJWT(){
-        return decodedJWT;
-    }
+
 }
