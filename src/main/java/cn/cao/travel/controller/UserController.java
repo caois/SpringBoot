@@ -116,6 +116,8 @@ public class UserController {
                 result.setState(false).setMessage("用户名或密码错误！");
             }else{
                 String uidCode = login.getId()+UUID.randomUUID().toString();
+                //每次生成一个不同的key 就有问题，但是如果不生成不同的 key，岂不是每个用户进来都是同一个key？
+
 
                 //修改 key 的序列化方案
                 redisTemplate.setStringSerializer(new StringRedisSerializer());
